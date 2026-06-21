@@ -1,0 +1,32 @@
+{
+  "name": "@gracon/database",
+  "version": "0.1.0",
+  "description": "Canonical Prisma schema, migrations, and generated database client for Gracon API services",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "build": "tsc -p tsconfig.json",
+    "check": "tsc -p tsconfig.json --noEmit",
+    "prisma:generate": "prisma generate",
+    "migrate:dev": "prisma migrate dev",
+    "migrate:deploy": "prisma migrate deploy",
+    "migrate:status": "prisma migrate status",
+    "db:seed": "prisma db seed"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs",
+  "private": "true",
+  "dependencies": {
+    "@prisma/adapter-pg": "^7.8.0",
+    "@prisma/client": "^7.8.0"
+  },
+  "devDependencies": {
+    "@types/node": "^26.0.0",
+    "dotenv": "^17.4.2",
+    "prisma": "^7.8.0",
+    "tsx": "^4.22.4",
+    "typescript": "^6.0.3"
+  }
+}
