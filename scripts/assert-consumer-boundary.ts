@@ -19,6 +19,16 @@ const consumers = [
   'meetings',
 ];
 
+const expectedRuntimeDatabaseUsers: Record<string, string> = {
+  auth: 'gracon_auth_app',
+  admin: 'gracon_admin_app',
+  documents: 'gracon_documents_app',
+  signature: 'gracon_signature_app',
+  institution: 'gracon_institution_app',
+  stamp: 'gracon_stamp_app',
+  meetings: 'gracon_meetings_app',
+};
+
 const forbiddenPackages = ['@prisma/client', '@prisma/adapter-pg', 'prisma'];
 const forbiddenSourceImports = ['@prisma/client', '@prisma/adapter-pg'];
 const forbiddenEnvTemplateValues = [
@@ -143,6 +153,23 @@ function checkEnvTemplate(projectName: string, projectRoot: string): void {
   for (const forbiddenValue of forbiddenEnvTemplateValues) {
     if (envExample.includes(forbiddenValue)) {
       errors.push(`${projectName}/.env.example must not reference ${forbiddenValue}.`);
+    }
+  }
+
+  const databaseUrl = envExample.match(/^DATABASE_URL=(.+)$/m)?.[1];
+  if (databaseUrl) {
+    try {
+      const parsedUrl = new URL(databaseUrl);
+      const username = decodeURIComponent(parsedUrl.username);
+      const expectedUsername = expectedRuntimeDatabaseUsers[projectName];
+
+      if (username !== expectedUsername) {
+        errors.push(
+          `${projectName}/.env.example DATABASE_URL must use ${expectedUsername}.`,
+        );
+      }
+    } catch {
+      errors.push(`${projectName}/.env.example DATABASE_URL must be a valid Postgres URL.`);
     }
   }
 }
