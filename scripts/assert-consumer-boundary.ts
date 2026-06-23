@@ -6,10 +6,12 @@ import {
 } from 'node:fs';
 import { join, relative, resolve } from 'node:path';
 
+// Enforces that runtime API services consume the database package without
+// regaining Prisma schema, migration, or DDL ownership.
 const databaseRoot = resolve(__dirname, '..');
 const apiRoot = resolve(databaseRoot, '..');
 
-const consumers = [
+const knownConsumers = [
   'auth',
   'admin',
   'documents',
@@ -59,6 +61,33 @@ const requiredEnvIgnoreEntries = [
 const sourceExtensions = new Set(['.js', '.mjs', '.cjs', '.ts', '.mts', '.cts']);
 
 const errors: string[] = [];
+
+function getConsumersToCheck(): string[] {
+  const scopedConsumers = process.env.BOUNDARY_CONSUMERS;
+  if (!scopedConsumers) {
+    return knownConsumers;
+  }
+
+  const consumersToCheck = scopedConsumers
+    .split(',')
+    .map((consumer) => consumer.trim())
+    .filter(Boolean);
+
+  if (consumersToCheck.length === 0) {
+    errors.push('BOUNDARY_CONSUMERS was provided but did not contain any consumer names.');
+    return [];
+  }
+
+  for (const consumer of consumersToCheck) {
+    if (!knownConsumers.includes(consumer)) {
+      errors.push(
+        `BOUNDARY_CONSUMERS contains unknown consumer "${consumer}". Known consumers: ${knownConsumers.join(', ')}.`,
+      );
+    }
+  }
+
+  return consumersToCheck;
+}
 
 function readJson(filePath: string): Record<string, any> {
   return JSON.parse(readFileSync(filePath, 'utf8'));
@@ -237,8 +266,13 @@ function checkSourceImports(projectName: string, projectRoot: string): void {
   }
 }
 
-for (const consumer of consumers) {
+for (const consumer of getConsumersToCheck()) {
   const projectRoot = join(apiRoot, consumer);
+  if (!existsSync(projectRoot)) {
+    errors.push(`${consumer} project root is missing at ${relativeToApi(projectRoot)}.`);
+    continue;
+  }
+
   checkPackageFile(consumer, projectRoot);
   checkPackageLock(consumer, projectRoot);
   checkOwnershipFiles(consumer, projectRoot);
