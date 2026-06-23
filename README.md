@@ -105,6 +105,17 @@ See [docs/runtime-database-roles.md](./docs/runtime-database-roles.md) for the
 manual SQL setup. Generate a unique password for every role and never reuse the
 migration-owner password.
 
+## Deployment Secrets
+
+Use [docs/deployment-secret-map.md](./docs/deployment-secret-map.md) as the
+source of truth for secret-manager names and service env injection. Keep local
+`.env` values separate from production values; production files should contain
+deployment placeholders or be replaced by the hosting platform secret manager.
+
+Use [docs/secret-decoupling-roadmap.md](./docs/secret-decoupling-roadmap.md)
+when reducing cross-service secret sharing. In particular, do not add new
+consumers of `SIGNATURE_ENCRYPTION_SECRET` or `INSTITUTION_ENCRYPTION_SECRET`.
+
 ## Local Commands
 
 ```bash
