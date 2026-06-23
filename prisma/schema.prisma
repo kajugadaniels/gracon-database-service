@@ -255,7 +255,7 @@ enum SecurityEvent {
 // ─────────────────────────────────────────────────────────────────────────────
 // DIGITAL SIGNATURE SERVICE TABLES (api/signature/)
 // These tables are migrated by api/database.
-// api/signature/ copies this schema and runs `prisma generate` only — never migrate.
+// api/signature imports the generated client from @gracon/database.
 // ─────────────────────────────────────────────────────────────────────────────
 
 // ─── Personal Signature Images ────────────────────────────────────────────────
@@ -453,7 +453,7 @@ model PersonalSignatureVerification {
 // ─────────────────────────────────────────────────────────────────────────────
 // DIGITAL STAMP SERVICE TABLES (api/stamp/)
 // These tables are migrated by api/database.
-// api/stamp/ copies this schema and runs `prisma generate` only — never migrate.
+// api/stamp imports the generated client from @gracon/database.
 // ─────────────────────────────────────────────────────────────────────────────
 
 // ─── Institutions ─────────────────────────────────────────────────────────────
@@ -833,7 +833,7 @@ enum AdminAction {
 // ─────────────────────────────────────────────────────────────────────────────
 // DOCUMENT SERVICE TABLES (api/documents/)
 // Migrated by api/database.
-// api/documents/ copies this schema and runs `prisma generate` only — never migrate.
+// api/documents imports the generated client from @gracon/database.
 // ─────────────────────────────────────────────────────────────────────────────
 
 // ─── Documents ────────────────────────────────────────────────────────────────
@@ -1212,8 +1212,8 @@ enum TemplateCategory {
 
 // ═════════════════════════════════════════════════════════════════════════════
 // FOREIGN IDENTITY SERVICE TABLES (api/foreign-identity/)
-// Migrated by api/database — api/foreign-identity/ only runs
-// `prisma generate` and never `prisma migrate`.
+// Migrated by api/database. Consumer services import the generated client from
+// @gracon/database and never run Prisma migrations.
 //
 // This is Gracon 360's internal identity registry for users who cannot be
 // verified through NIDA because they do not have a Rwandan National ID.
@@ -1321,9 +1321,9 @@ enum MaritalStatus {
 
 // ═════════════════════════════════════════════════════════════════════════════
 // MEETINGS SERVICE TABLES (api/meetings/)
-// Migrated by api/database — api/meetings/ copies this schema and
-// runs `prisma generate` only. api/meetings owns business rules, Stream call
-// tokens, scheduling, invitations, recordings metadata, and meeting audit logs.
+// Migrated by api/database. api/meetings imports the generated client from
+// @gracon/database and owns business rules, Stream call tokens, scheduling,
+// invitations, recordings metadata, and meeting audit logs.
 // ═════════════════════════════════════════════════════════════════════════════
 
 // ─── Meetings ────────────────────────────────────────────────────────────────
