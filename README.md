@@ -105,6 +105,10 @@ See [docs/runtime-database-roles.md](./docs/runtime-database-roles.md) for the
 manual SQL setup. Generate a unique password for every role and never reuse the
 migration-owner password.
 
+Use [docs/table-privilege-matrix.md](./docs/table-privilege-matrix.md) and
+[docs/runtime-table-grants.sql](./docs/runtime-table-grants.sql) to move from
+broad runtime access toward table-level least privilege.
+
 For a first clone setup with Neon, follow
 [docs/neon-first-clone-setup.md](./docs/neon-first-clone-setup.md).
 
@@ -118,6 +122,12 @@ deployment placeholders or be replaced by the hosting platform secret manager.
 Use [docs/secret-decoupling-roadmap.md](./docs/secret-decoupling-roadmap.md)
 when reducing cross-service secret sharing. In particular, do not add new
 consumers of `SIGNATURE_ENCRYPTION_SECRET` or `INSTITUTION_ENCRYPTION_SECRET`.
+
+## Security Hardening
+
+Read [SECURITY.md](./SECURITY.md) before changing database roles, internal
+service calls, audit-sensitive flows, production secrets, backup posture, or API
+edge controls.
 
 ## Local Commands
 
