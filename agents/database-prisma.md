@@ -10,6 +10,7 @@
 - Consumer APIs import Prisma client and types from `@gracon/database`.
 - Consumer APIs must not run `prisma migrate` or `prisma db push`.
 - Do not hand-edit generated Prisma client output.
+- Use `npm run check:boundary` to verify consumers have not regained local Prisma ownership.
 
 ## Migration Rules
 
@@ -31,4 +32,3 @@
 - Database-owned seeds belong in `api/database/prisma`.
 - Seeds that create privileged accounts must be idempotent and environment-gated.
 - Never run seeds against production unless the target environment and command are explicitly confirmed.
-
