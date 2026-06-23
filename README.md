@@ -89,6 +89,22 @@ When another service needs a shared secret, inject the owner's value into that
 service under the key that service already validates. Do not create a second
 independent value with the same purpose.
 
+## Runtime Database Roles
+
+Each API service must use a separate runtime Postgres role in `DATABASE_URL`:
+
+- `api/auth`: `gracon_auth_app`
+- `api/admin`: `gracon_admin_app`
+- `api/documents`: `gracon_documents_app`
+- `api/signature`: `gracon_signature_app`
+- `api/institution`: `gracon_institution_app`
+- `api/stamp`: `gracon_stamp_app`
+- `api/meetings`: `gracon_meetings_app`
+
+See [docs/runtime-database-roles.md](./docs/runtime-database-roles.md) for the
+manual SQL setup. Generate a unique password for every role and never reuse the
+migration-owner password.
+
 ## Local Commands
 
 ```bash
