@@ -8,5 +8,7 @@ Update `.env.example` for every new database-owned environment variable.
 Update consumer service READMEs and agent guides when shared schema ownership or
 Prisma import flow changes.
 
+Document new validation or boundary commands in `README.md` and testing rules.
+
 Schema comments should say `api/database` owns migrations. Consumer services
 should be documented as importing the generated client from `@gracon/database`.
