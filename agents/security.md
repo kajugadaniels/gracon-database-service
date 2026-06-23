@@ -6,6 +6,7 @@ service access.
 ## Credentials
 
 - `DATABASE_MIGRATION_URL` belongs only in `api/database`.
+- Use `EXPECTED_MIGRATION_DATABASE_USER` when an environment has a known migration role name.
 - Never copy migration credentials into `api/auth`, `api/admin`, or any other API service.
 - Runtime services must use least-privilege `DATABASE_URL` credentials.
 - Runtime roles should not own tables and should not have DDL privileges.
@@ -25,6 +26,6 @@ service access.
 ## Migration Safety
 
 - Migration commands must be intentional, manual actions.
+- Migration commands must fail if `DATABASE_MIGRATION_URL` is missing, invalid, points at an app or readonly role, or matches `DATABASE_URL`.
 - Do not run destructive DDL without a reviewed migration and rollback plan.
 - Do not edit deployed migration files; add a new migration instead.
-
