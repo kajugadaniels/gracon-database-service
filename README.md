@@ -89,7 +89,9 @@ as a side effect of starting an API service.
 `npm run check:boundary` verifies that consumer services depend on
 `@gracon/database`, do not declare local Prisma CLI/client dependencies, do not
 restore local schema or migration ownership files, and do not import Prisma
-directly from `@prisma/client`.
+directly from `@prisma/client`. It also verifies consumer env templates do not
+document migration credentials and consumer `.gitignore` files protect both
+dot-env and no-dot env filenames.
 
 ## Consumer Usage
 
