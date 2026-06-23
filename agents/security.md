@@ -16,6 +16,10 @@ service access.
 - Consumer `.env.example` files must not mention migration credentials or local Prisma ownership commands.
 - Consumer `.gitignore` files must ignore both dot-env files and no-dot env files.
 - Runtime services must use least-privilege `DATABASE_URL` credentials.
+- Runtime `DATABASE_URL` usernames must be service-specific app roles:
+  `gracon_auth_app`, `gracon_admin_app`, `gracon_documents_app`,
+  `gracon_signature_app`, `gracon_institution_app`, `gracon_stamp_app`, and
+  `gracon_meetings_app`.
 - Runtime roles should not own tables and should not have DDL privileges.
 
 ## Sensitive Data
