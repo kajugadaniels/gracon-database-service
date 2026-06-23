@@ -24,6 +24,10 @@ const forbiddenSourceImports = ['@prisma/client', '@prisma/adapter-pg'];
 const forbiddenEnvTemplateValues = [
   'DATABASE_MIGRATION_URL',
   'EXPECTED_MIGRATION_DATABASE_USER',
+  'SUPER_ADMIN_FIRST_NAME',
+  'SUPER_ADMIN_LAST_NAME',
+  'SUPER_ADMIN_EMAIL',
+  'SUPER_ADMIN_PASSWORD',
   'prisma migrate',
   'prisma db push',
   'prisma generate',
