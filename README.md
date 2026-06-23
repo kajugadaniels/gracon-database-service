@@ -70,6 +70,25 @@ copy `DATABASE_MIGRATION_URL` into any API service. Set
 `EXPECTED_MIGRATION_DATABASE_USER` when you want migration commands to fail
 unless the migration URL uses that exact Postgres role.
 
+## Secret Ownership
+
+Environment variables can be injected into more than one service, but each
+shared secret has one owner:
+
+- `api/database` owns `DATABASE_MIGRATION_URL`,
+  `EXPECTED_MIGRATION_DATABASE_USER`, and the database-owned `SUPER_ADMIN_*`
+  seed variables.
+- `api/auth` owns the user-domain `JWT_SECRET` and `ENCRYPTION_SECRET`.
+- `api/admin` owns `ADMIN_JWT_SECRET`.
+- `api/signature` owns `SIGNATURE_ENCRYPTION_SECRET`.
+- `api/institution` owns `INSTITUTION_ENCRYPTION_SECRET`.
+- Runtime services own only their runtime `DATABASE_URL`; those users must be
+  least-privilege and migration-incapable.
+
+When another service needs a shared secret, inject the owner's value into that
+service under the key that service already validates. Do not create a second
+independent value with the same purpose.
+
 ## Local Commands
 
 ```bash
