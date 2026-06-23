@@ -58,6 +58,7 @@ connection string.
 
 ```env
 DATABASE_MIGRATION_URL=postgresql://gracon_migrator:password@host/db?sslmode=verify-full
+EXPECTED_MIGRATION_DATABASE_USER=gracon_migrator
 SUPER_ADMIN_FIRST_NAME=Super
 SUPER_ADMIN_LAST_NAME=Admin
 SUPER_ADMIN_EMAIL=superadmin@yourplatform.com
@@ -65,13 +66,16 @@ SUPER_ADMIN_PASSWORD=YourStr0ng!Password
 ```
 
 Runtime services use their own least-privilege `DATABASE_URL` values. Do not
-copy `DATABASE_MIGRATION_URL` into any API service.
+copy `DATABASE_MIGRATION_URL` into any API service. Set
+`EXPECTED_MIGRATION_DATABASE_USER` when you want migration commands to fail
+unless the migration URL uses that exact Postgres role.
 
 ## Local Commands
 
 ```bash
 npm run prisma:generate
 npm run check
+npm run check:boundary
 npm run build
 npm run migrate:status
 npm run migrate:dev
@@ -81,6 +85,11 @@ npm run db:seed
 
 Migration commands must be run manually and deliberately. Never run migrations
 as a side effect of starting an API service.
+
+`npm run check:boundary` verifies that consumer services depend on
+`@gracon/database`, do not declare local Prisma CLI/client dependencies, do not
+restore local schema or migration ownership files, and do not import Prisma
+directly from `@prisma/client`.
 
 ## Consumer Usage
 
@@ -99,10 +108,10 @@ or ownership of shared tables.
 - Change shared schema only in `api/database/prisma/schema.prisma`.
 - Create and apply migrations only from `api/database`.
 - Run `npm run prisma:generate` here after schema changes.
+- Run `npm run check:boundary` after changing consumer database integration.
 - Consumer services must not run `prisma migrate` or `prisma db push`.
 - Keep generated Prisma output out of hand edits.
 - Keep database roles least-privilege: migrator credentials are separate from
   runtime service credentials.
 - Do not add app-service dependencies here unless the database package directly
   uses them.
-
