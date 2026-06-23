@@ -26,6 +26,7 @@
     "prebuild": "tsx scripts/assert-generated-client.ts",
     "check": "tsx scripts/assert-generated-client.ts && tsc -p tsconfig.json --noEmit && tsc -p tsconfig.scripts.json --noEmit",
     "check:boundary": "tsx scripts/assert-consumer-boundary.ts",
+    "check:security": "tsx scripts/assert-security-hardening.ts",
     "prisma:generate": "prisma generate && tsx scripts/assert-generated-client.ts",
     "migrate:dev": "tsx scripts/assert-migration-env.ts migrate:dev && prisma migrate dev",
     "migrate:deploy": "tsx scripts/assert-migration-env.ts migrate:deploy && prisma migrate deploy",
