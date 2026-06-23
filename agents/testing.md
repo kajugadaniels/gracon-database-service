@@ -4,6 +4,7 @@
 
 - Run `npm run prisma:generate` after changing `prisma/schema.prisma`.
 - Run `npm run check` after changing TypeScript exports or scripts.
+- Run `npm run check:boundary` after changing consumer Prisma dependencies, imports, package locks, or local Prisma folders.
 - Run `npm run build` before publishing package changes to consumers.
 
 ## Migration Checks
@@ -15,4 +16,3 @@
 ## Consumer Checks
 
 After changing generated-client exports, build each converted consumer service.
-
