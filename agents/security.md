@@ -7,6 +7,11 @@ service access.
 
 - `DATABASE_MIGRATION_URL` belongs only in `api/database`.
 - Use `EXPECTED_MIGRATION_DATABASE_USER` when an environment has a known migration role name.
+- `SUPER_ADMIN_*` seed variables belong only in `api/database`.
+- `JWT_SECRET` and `ENCRYPTION_SECRET` are owned by `api/auth`; consumers may receive the same injected values only when they validate auth-owned data.
+- `ADMIN_JWT_SECRET` is owned by `api/admin` and must not be shared with user-domain services.
+- `SIGNATURE_ENCRYPTION_SECRET` is owned by `api/signature`.
+- `INSTITUTION_ENCRYPTION_SECRET` is owned by `api/institution`.
 - Never copy migration credentials into `api/auth`, `api/admin`, or any other API service.
 - Consumer `.env.example` files must not mention migration credentials or local Prisma ownership commands.
 - Consumer `.gitignore` files must ignore both dot-env files and no-dot env files.
