@@ -12,6 +12,12 @@ service access.
 - `ADMIN_JWT_SECRET` is owned by `api/admin` and must not be shared with user-domain services.
 - `SIGNATURE_ENCRYPTION_SECRET` is owned by `api/signature`.
 - `INSTITUTION_ENCRYPTION_SECRET` is owned by `api/institution`.
+- Shared values must be injected from the canonical deployment secret map in
+  `docs/deployment-secret-map.md`; do not hand-copy shared production secrets
+  between project env files.
+- Local and production secrets must be different. Production env files should
+  contain deployment placeholders or platform-managed secret references, not
+  local development values.
 - Never copy migration credentials into `api/auth`, `api/admin`, or any other API service.
 - Consumer `.env.example` files must not mention migration credentials or local Prisma ownership commands.
 - Consumer `.gitignore` files must ignore both dot-env files and no-dot env files.
@@ -33,6 +39,9 @@ service access.
 - This package owns schema and generated client only.
 - Do not add HTTP routes, JWT handling, mail delivery, S3 access, Stream access, or business workflows here.
 - Do not centralize service secrets in this package.
+- Do not add new services that read `SIGNATURE_ENCRYPTION_SECRET` or
+  `INSTITUTION_ENCRYPTION_SECRET`; follow `docs/secret-decoupling-roadmap.md`
+  instead.
 
 ## Migration Safety
 
