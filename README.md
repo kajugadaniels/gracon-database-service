@@ -1,0 +1,108 @@
+# API Database
+
+Canonical database ownership package for the Gracon platform.
+
+This project owns the shared Prisma schema, migrations, migration history, and
+generated Prisma client used by the backend API services. It is intentionally
+not a NestJS application and does not expose HTTP routes.
+
+## Overview
+
+- Runtime: TypeScript tooling and Prisma CLI only
+- Database: shared Postgres via Prisma
+- Migration owner: `api/database`
+- Generated client package: `@gracon/database`
+- Consumers: `api/auth`, `api/admin`, `api/signature`, `api/stamp`,
+  `api/institution`, `api/documents`, and `api/meetings`
+
+## What This Project Owns
+
+- Canonical Prisma schema
+- Prisma migrations
+- Prisma migration lock file
+- Shared generated Prisma client and types
+- Shared PrismaPg client factory
+- Database-owned seed scripts, including the first `SUPER_ADMIN`
+- Database ownership documentation and agent rules
+
+## What This Project Must Not Own
+
+- User authentication, sessions, JWT issuance, or password reset flows
+- Admin control-plane business logic
+- Document lifecycle, S3 document bodies, invitation gates, or signing workflow
+- Personal or institutional private-key handling
+- Stream Video calls, meeting media tokens, or recording lifecycle
+- HTTP controllers, guards, DTOs, Swagger, or app-specific modules
+
+## Folder Structure
+
+```text
+api/database/
+  agents/          project-local AI agent rules
+  prisma/
+    migrations/    canonical migration history
+    schema.prisma  canonical shared Prisma schema
+    seed.ts        database-owned seed entrypoint
+  scripts/         safety checks used by package scripts
+  src/
+    generated/     Prisma client output after generation
+    index.ts       public package exports
+  package.json
+  prisma.config.ts
+```
+
+## Environment
+
+`api/database` is the only project that should receive a migration-capable
+connection string.
+
+```env
+DATABASE_MIGRATION_URL=postgresql://gracon_migrator:password@host/db?sslmode=verify-full
+SUPER_ADMIN_FIRST_NAME=Super
+SUPER_ADMIN_LAST_NAME=Admin
+SUPER_ADMIN_EMAIL=superadmin@yourplatform.com
+SUPER_ADMIN_PASSWORD=YourStr0ng!Password
+```
+
+Runtime services use their own least-privilege `DATABASE_URL` values. Do not
+copy `DATABASE_MIGRATION_URL` into any API service.
+
+## Local Commands
+
+```bash
+npm run prisma:generate
+npm run check
+npm run build
+npm run migrate:status
+npm run migrate:dev
+npm run migrate:deploy
+npm run db:seed
+```
+
+Migration commands must be run manually and deliberately. Never run migrations
+as a side effect of starting an API service.
+
+## Consumer Usage
+
+Consumer services import Prisma from this package:
+
+```ts
+import { PrismaClient, createPrismaClient } from '@gracon/database';
+```
+
+Services should construct clients with their own runtime `DATABASE_URL`. Runtime
+database users should not have DDL privileges such as `CREATE`, `ALTER`, `DROP`,
+or ownership of shared tables.
+
+## Important Rules
+
+- Change shared schema only in `api/database/prisma/schema.prisma`.
+- Create and apply migrations only from `api/database`.
+- Run `npm run prisma:generate` here after schema changes.
+- Consumer services must not run `prisma migrate` or `prisma db push`.
+- Keep generated Prisma output out of hand edits.
+- Keep database roles least-privilege: migrator credentials are separate from
+  runtime service credentials.
+- Do not add app-service dependencies here unless the database package directly
+  uses them.
+
