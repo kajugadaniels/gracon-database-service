@@ -1,0 +1,51 @@
+name: API database security checks
+
+on:
+  pull_request:
+  push:
+    branches:
+      - main
+
+permissions:
+  contents: read
+
+jobs:
+  database-security:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout database repo
+        uses: actions/checkout@v4
+        with:
+          path: api/database
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: api/database/package-lock.json
+
+      - name: Install database package
+        working-directory: api/database
+        run: npm ci
+
+      - name: Generate shared Prisma client
+        working-directory: api/database
+        run: npm run prisma:generate
+
+      - name: Check database package
+        working-directory: api/database
+        run: npm run check
+
+      - name: Check security hardening baseline
+        working-directory: api/database
+        run: npm run check:security
+
+      - name: Build database package
+        working-directory: api/database
+        run: npm run build
+
+      - name: Audit database package
+        working-directory: api/database
+        run: npm audit --audit-level=high
