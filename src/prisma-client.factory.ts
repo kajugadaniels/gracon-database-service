@@ -11,9 +11,9 @@ export interface CreatePrismaClientOptions {
   prismaOptions?: Omit<PrismaClientConstructorOptions, 'adapter'>;
 }
 
-export function createPrismaClient(
+export function createPrismaClientOptions(
   options: CreatePrismaClientOptions = {},
-): PrismaClient {
+): PrismaClientConstructorOptions {
   const connectionString = options.connectionString ?? process.env.DATABASE_URL;
 
   if (!connectionString) {
@@ -24,8 +24,14 @@ export function createPrismaClient(
     connectionString: normalizeDatabaseUrl(connectionString),
   });
 
-  return new PrismaClient({
+  return {
     ...options.prismaOptions,
     adapter,
-  } as PrismaClientConstructorOptions);
+  } as PrismaClientConstructorOptions;
+}
+
+export function createPrismaClient(
+  options: CreatePrismaClientOptions = {},
+): PrismaClient {
+  return new PrismaClient(createPrismaClientOptions(options));
 }
