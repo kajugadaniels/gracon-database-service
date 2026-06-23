@@ -21,6 +21,27 @@ const consumers = [
 
 const forbiddenPackages = ['@prisma/client', '@prisma/adapter-pg', 'prisma'];
 const forbiddenSourceImports = ['@prisma/client', '@prisma/adapter-pg'];
+const forbiddenEnvTemplateValues = [
+  'DATABASE_MIGRATION_URL',
+  'EXPECTED_MIGRATION_DATABASE_USER',
+  'prisma migrate',
+  'prisma db push',
+  'prisma generate',
+];
+const requiredEnvIgnoreEntries = [
+  '.env',
+  '.env.development.local',
+  '.env.test.local',
+  '.env.production',
+  '.env.production.local',
+  '.env.local',
+  'env',
+  'env.development.local',
+  'env.test.local',
+  'env.production',
+  'env.production.local',
+  'env.local',
+];
 const sourceExtensions = new Set(['.js', '.mjs', '.cjs', '.ts', '.mts', '.cts']);
 
 const errors: string[] = [];
@@ -108,6 +129,41 @@ function checkOwnershipFiles(projectName: string, projectRoot: string): void {
   }
 }
 
+function checkEnvTemplate(projectName: string, projectRoot: string): void {
+  const envExamplePath = join(projectRoot, '.env.example');
+  if (!existsSync(envExamplePath)) {
+    return;
+  }
+
+  const envExample = readFileSync(envExamplePath, 'utf8');
+  for (const forbiddenValue of forbiddenEnvTemplateValues) {
+    if (envExample.includes(forbiddenValue)) {
+      errors.push(`${projectName}/.env.example must not reference ${forbiddenValue}.`);
+    }
+  }
+}
+
+function checkGitignore(projectName: string, projectRoot: string): void {
+  const gitignorePath = join(projectRoot, '.gitignore');
+  if (!existsSync(gitignorePath)) {
+    errors.push(`${projectName}/.gitignore is required to protect environment files.`);
+    return;
+  }
+
+  const entries = new Set(
+    readFileSync(gitignorePath, 'utf8')
+      .split(/\r?\n/)
+      .map((line) => line.trim())
+      .filter((line) => line && !line.startsWith('#')),
+  );
+
+  for (const requiredEntry of requiredEnvIgnoreEntries) {
+    if (!entries.has(requiredEntry)) {
+      errors.push(`${projectName}/.gitignore must ignore ${requiredEntry}.`);
+    }
+  }
+}
+
 function walkFiles(directoryPath: string, files: string[] = []): string[] {
   if (!existsSync(directoryPath)) {
     return files;
@@ -155,6 +211,8 @@ for (const consumer of consumers) {
   checkPackageFile(consumer, projectRoot);
   checkPackageLock(consumer, projectRoot);
   checkOwnershipFiles(consumer, projectRoot);
+  checkEnvTemplate(consumer, projectRoot);
+  checkGitignore(consumer, projectRoot);
   checkSourceImports(consumer, projectRoot);
 }
 
