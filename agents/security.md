@@ -8,6 +8,8 @@ service access.
 - `DATABASE_MIGRATION_URL` belongs only in `api/database`.
 - Use `EXPECTED_MIGRATION_DATABASE_USER` when an environment has a known migration role name.
 - Never copy migration credentials into `api/auth`, `api/admin`, or any other API service.
+- Consumer `.env.example` files must not mention migration credentials or local Prisma ownership commands.
+- Consumer `.gitignore` files must ignore both dot-env files and no-dot env files.
 - Runtime services must use least-privilege `DATABASE_URL` credentials.
 - Runtime roles should not own tables and should not have DDL privileges.
 
