@@ -105,6 +105,9 @@ See [docs/runtime-database-roles.md](./docs/runtime-database-roles.md) for the
 manual SQL setup. Generate a unique password for every role and never reuse the
 migration-owner password.
 
+For a first clone setup with Neon, follow
+[docs/neon-first-clone-setup.md](./docs/neon-first-clone-setup.md).
+
 ## Deployment Secrets
 
 Use [docs/deployment-secret-map.md](./docs/deployment-secret-map.md) as the
